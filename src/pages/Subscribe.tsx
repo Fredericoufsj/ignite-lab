@@ -1,13 +1,29 @@
 import { FormEvent, useState } from "react";
 import { Logo } from "../components/Logo";
+import { gql, useMutation } from "@apollo/client";
+
+const CREATE_SUBSCRIBER_MUTATION = gql`
+  mutation CreateSubscriber($name: String!, $email: String!) {
+    createSubscriber(data: { name: $name, email: $email }) {
+      id
+    }
+  }
+`;
 
 export function Subscribe() {
-  const[name, setName] = useState("");
-  const[email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
-  function handleSubscribe(e: FormEvent){
+  const [createSubscriber] = useMutation(CREATE_SUBSCRIBER_MUTATION);
+
+  function handleSubscribe(e: FormEvent) {
     e.preventDefault();
-    console.log(name, email)
+    createSubscriber({
+      variables: {
+        name,
+        email,
+      },
+    });
   }
 
   return (
@@ -30,20 +46,25 @@ export function Subscribe() {
           <strong className="text-2xl mb-6 block">
             Inscreva-se Gratuitamente
           </strong>
-          <form onSubmit={handleSubscribe} className="flex flex-col gap-2 w-full">
-            <input type="text" 
-            className="bg-gray-900 rounded px-5 h-14" 
-            placeholder="Seu nome completo" 
-            onChange={(e) => setName(e.target.value)}
+          <form
+            onSubmit={handleSubscribe}
+            className="flex flex-col gap-2 w-full"
+          >
+            <input
+              type="text"
+              className="bg-gray-900 rounded px-5 h-14"
+              placeholder="Seu nome completo"
+              onChange={(e) => setName(e.target.value)}
             />
-             <input type="email" 
-            className="bg-gray-900 rounded px-5 h-14" 
-            placeholder="Digite seu e-mail" 
-            onChange={(e) => setEmail(e.target.value)}
+            <input
+              type="email"
+              className="bg-gray-900 rounded px-5 h-14"
+              placeholder="Digite seu e-mail"
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <button 
-            type="submit"
-            className="mt-4 bg-green-500 uppercase py-4 rounded font-bold text-sm hover:bg-green-700 transition-colors"
+            <button
+              type="submit"
+              className="mt-4 bg-green-500 uppercase py-4 rounded font-bold text-sm hover:bg-green-700 transition-colors"
             >
               Garantir minha vaga
             </button>
